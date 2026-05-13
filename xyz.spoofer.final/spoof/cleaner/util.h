@@ -3,7 +3,7 @@
 #define LENGTH(a) (sizeof(a) / sizeof(a[0]))
 
 typedef NTSTATUS(WINAPI* NTQK)(HANDLE KeyHandle, DWORD KeyInformationClass, PVOID KeyInformation, ULONG Length, PULONG ResultLength);
-NTQK NtQueryKey;
+extern NTQK NtQueryKey;
 
 LPWSTR GetKeyPath(HKEY key);
 BOOL GetKeyValue(HKEY key, LPCWSTR value, LPBYTE buffer, DWORD* size);
