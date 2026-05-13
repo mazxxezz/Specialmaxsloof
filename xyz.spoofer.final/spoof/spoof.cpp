@@ -44,7 +44,7 @@ inline bool FileExists(const std::string& name) {
     struct stat buffer;
     return (stat(name.c_str(), &buffer) == 0);
 }
-bool IsProcessRunning(const TCHAR* executableName) {
+bool IsProcessRunning(const char* executableName) {
     PROCESSENTRY32 entry;
     entry.dwSize = sizeof(PROCESSENTRY32);
 
@@ -56,7 +56,7 @@ bool IsProcessRunning(const TCHAR* executableName) {
     }
 
     do {
-        if (!_tcsicmp(entry.szExeFile, executableName)) {
+        if (!_stricmp(entry.szExeFile, executableName)) {
             CloseHandle(snapshot);
             return true;
         }
@@ -125,7 +125,7 @@ void GayMacChanger() {
 
     if (FileExists(changer)) {
         system(changer.c_str());
-        DeleteFile(changer.c_str());
+        DeleteFileA(changer.c_str());
     }
 }
 void DriverLoad() {
@@ -154,10 +154,10 @@ void DriverLoad() {
                     system(loadCommand.c_str());
 
                     // Delete gdrv,mapper,driver
-                    DeleteFile(mapperRandomize.c_str());
-                    DeleteFile(gdrvRandomize.c_str());
-                    DeleteFile(driverRandomize.c_str());
-                    DeleteFile(finalPath.c_str());
+                    DeleteFileA(mapperRandomize.c_str());
+                    DeleteFileA(gdrvRandomize.c_str());
+                    DeleteFileA(driverRandomize.c_str());
+                    DeleteFileA(finalPath.c_str());
                 }
             }
         }
