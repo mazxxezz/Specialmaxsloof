@@ -1,0 +1,87 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-windows:
+    name: Build on Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x86, x64]
+        config: [Debug, Release]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        choco install cmake -y
+        choco install ninja -y
+    
+    - name: Configure CMake (${{ matrix.arch }} - ${{ matrix.config }})
+      run: |
+        $arch = if ("${{ matrix.arch }}" -eq "x86") { "Win32" } else { "x64" }
+        cmake -B build -A $arch -DCMAKE_BUILD_TYPE=${{ matrix.config }} -G "Visual Studio 17 2022"
+      shell: pwsh
+    
+    - name: Build
+      run: cmake --build build --config ${{ matrix.config }}
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-${{ matrix.arch }}-${{ matrix.config }}
+        path: build/
+        retention-days: 5
+
+  code-analysis:
+    name: Code Analysis
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: choco install cmake -y
+    
+    - name: Configure CMake
+      run: cmake -B build
+    
+    - name: Run cppcheck
+      run: |
+        choco install cppcheck -y
+        cppcheck --enable=all --suppress=missingIncludeSystem src/ || true
+      shell: pwsh
+      continue-on-error: true
+
+  check-format:
+    name: Code Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install clang-format
+      run: sudo apt-get install -y clang-format
+    
+    - name: Check C++ formatting
+      run: |
+        find . -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | while read file; do
+          clang-format --dry-run --Werror "$file" || exit 1
+        done
+      continue-on-error: true
