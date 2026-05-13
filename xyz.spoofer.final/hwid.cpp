@@ -28,7 +28,7 @@ std::string HWID = _xor_("a");
 using namespace std;
 char* getVolumeId() {
     DWORD VolumeSerialNumber = 0;
-    GetVolumeInformation("C:\\", NULL, NULL, &VolumeSerialNumber, NULL, NULL, NULL, NULL);
+    GetVolumeInformation(L"C:\\", NULL, NULL, &VolumeSerialNumber, NULL, NULL, NULL, NULL);
     char* str = new char[16];
     sprintf(str, "%d", VolumeSerialNumber);
     return str;
@@ -80,6 +80,7 @@ string getProductId() {
         string convertRgVal(rgValueCh.begin(), rgValueCh.end());
         return convertRgVal;
     }
+    return "";
 }
 string getCurrentBuild() {
     HKEY keyHandle;
@@ -97,6 +98,7 @@ string getCurrentBuild() {
         string convertRgVal(rgValueCh.begin(), rgValueCh.end());
         return convertRgVal;
     }
+    return "";
 }
 string getMachineId()
 {
@@ -110,10 +112,10 @@ string getMachineId()
     DWORD dwSysFlags;
     int error = 0;
 
-    bool success = GetVolumeInformation(LPCTSTR("C:\\"), (LPTSTR)szVolNameBuff,
+    bool success = GetVolumeInformation(L"C:\\", (LPWSTR)szVolNameBuff,
         255, &dwSerial,
         &dwMFL, &dwSysFlags,
-        (LPTSTR)szFileSys,
+        (LPWSTR)szFileSys,
         255);
     if (!success) {
         ss = "Err_Not_Elevated";
@@ -177,6 +179,7 @@ string getHWinfo64() {
 
         return HWID;
     }
+    return "";
 }
 string GetProcessorId() {
     std::array<int, 4> cpuInfo;
