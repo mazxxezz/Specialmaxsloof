@@ -67,7 +67,6 @@ char* getMAC() {
 string getProductId() {
     HKEY keyHandle;
     WCHAR rgValue[1024];
-    WCHAR fnlRes[1024];
     DWORD size1;
     DWORD Type;
 
@@ -85,7 +84,6 @@ string getProductId() {
 string getCurrentBuild() {
     HKEY keyHandle;
     WCHAR rgValue[1024];
-    WCHAR fnlRes[1024];
     DWORD size1;
     DWORD Type;
 
@@ -129,7 +127,8 @@ string getHWinfo64() {
     if (GetCurrentHwProfile(&hwProfileInfo)) {
 
         string a, b, c, d, e, f, g, h;
-        string hwid = hwProfileInfo.szHwProfileGuid;
+        wstring hwid_wide = hwProfileInfo.szHwProfileGuid;
+        string hwid(hwid_wide.begin(), hwid_wide.end());
 
         a = hwid.substr(0, 3); b = hwid.substr(2, 3);
         c = hwid.substr(4, 3); d = hwid.substr(6, 3);
