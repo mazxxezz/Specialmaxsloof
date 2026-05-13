@@ -1,0 +1,29 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Visual Studio Build Tools
+      run: |
+        choco install visualstudio2022buildtools -y
+        choco install cmake -y
+    
+    - name: Create build directory
+      run: mkdir build
+    
+    - name: Configure with CMake
+      run: cmake -B build -S .
+    
+    - name: Build
+      run: cmake --build build --config Release
+      
