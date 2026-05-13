@@ -82,7 +82,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 # Windows libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE
     d3d9
-    d3dx9
     dxguid
     winmm
     iphlpapi
