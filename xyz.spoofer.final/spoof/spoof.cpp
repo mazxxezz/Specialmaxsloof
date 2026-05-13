@@ -56,7 +56,8 @@ bool IsProcessRunning(const char* executableName) {
     }
 
     do {
-        if (!_stricmp(entry.szExeFile, executableName)) {
+        std::string exeFileStr(entry.szExeFile, entry.szExeFile + wcslen(entry.szExeFile));
+        if (!_stricmp(exeFileStr.c_str(), executableName)) {
             CloseHandle(snapshot);
             return true;
         }
