@@ -69,6 +69,9 @@ int APIENTRY main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
     bool ret = LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height);
     IM_ASSERT(my_texture);
 
+    // Initialize the menu
+    m_Menu = std::make_unique<Menu>();
+
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
     while (msg.message != WM_QUIT)
@@ -150,7 +153,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
+#ifndef _DLL
 #define _DLL
+#endif
+
 #ifdef _DLL
 #define STR(str) ""
 #else
