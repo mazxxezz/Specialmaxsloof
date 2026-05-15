@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <windows.h>
 #include <thread>
 #include <random>
