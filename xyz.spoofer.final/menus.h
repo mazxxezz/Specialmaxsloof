@@ -11,11 +11,6 @@
 #include "imgui/imgui_impl_win32.h"
 #include "imgui/imgui_internal.h"
 
-#define WINDOW_TITLE " "
-#define WINDOW_WIDTH  750
-#define WINDOW_HEIGHT 450
-#define COLOUR(x) x/255
-
 enum states {
 	loading,
 	menu
