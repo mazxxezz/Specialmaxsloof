@@ -2,7 +2,7 @@
 
 #define LENGTH(a) (sizeof(a) / sizeof(a[0]))
 
-typedef NTSTATUS(__stdcall* NTQK)(HANDLE KeyHandle, DWORD KeyInformationClass, PVOID KeyInformation, ULONG Length, PULONG ResultLength);
+typedef NTSTATUS (__stdcall* NTQK)(HANDLE KeyHandle, DWORD KeyInformationClass, PVOID KeyInformation, ULONG Length, PULONG ResultLength);
 extern NTQK NtQueryKey;
 
 LPWSTR GetKeyPath(HKEY key);

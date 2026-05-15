@@ -1,4 +1,4 @@
-﻿#include "main.h"
+#include "main.h"
 #include "menus.h"
 
 
@@ -8,20 +8,27 @@ void HideConsole()
     ::ShowWindow(::GetConsoleWindow(), SW_HIDE);
 }
 
-int APIENTRY main(HINSTANCE, HINSTANCE, LPSTR, int)
+void Theme()
+{
+    // Apply custom ImGui theme here
+    ImGuiStyle& style = ImGui::GetStyle();
+    // Theme customizations can be added here
+}
+
+int APIENTRY main(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     HideConsole();
 
 
     if (!FileExists(imagePath)) utils::CreateFileFromMemory(imagePath, reinterpret_cast<const char*>(logo), sizeof(logo));
 
-    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, WINDOW_TITLE, NULL };
-    RegisterClassEx(&wc);
-    main_hwnd = CreateWindow(wc.lpszClassName, WINDOW_TITLE, WS_POPUP, 0, 0, 5, 5, NULL, NULL, wc.hInstance, NULL);
+    WNDCLASSEXW wc = { sizeof(WNDCLASSEXW), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, L"MainWindowClass", NULL };
+    RegisterClassExW(&wc);
+    main_hwnd = CreateWindowW(wc.lpszClassName, WINDOW_TITLE, WS_POPUP, 0, 0, 5, 5, NULL, NULL, wc.hInstance, NULL);
 
     if (!CreateDeviceD3D(main_hwnd)) {
         CleanupDeviceD3D();
-        UnregisterClass(wc.lpszClassName, wc.hInstance);
+        UnregisterClassW(wc.lpszClassName, wc.hInstance);
         return 1;
     }
 
@@ -60,7 +67,7 @@ int APIENTRY main(HINSTANCE, HINSTANCE, LPSTR, int)
     int my_image_height = 0;
     PDIRECT3DTEXTURE9 my_texture = NULL;
     bool ret = LoadTextureFromFile(imagePath.c_str(), &my_texture, &my_image_width, &my_image_height);
-    IM_ASSERT(my_image_data);
+    IM_ASSERT(my_texture);
 
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
@@ -77,7 +84,9 @@ int APIENTRY main(HINSTANCE, HINSTANCE, LPSTR, int)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
         {
-            m_Menu->Main(loader_active, my_texture);
+            if (m_Menu) {
+                m_Menu->Main(loader_active, my_texture);
+            }
         }
         ImGui::EndFrame();
 
@@ -111,7 +120,7 @@ int APIENTRY main(HINSTANCE, HINSTANCE, LPSTR, int)
 
     CleanupDeviceD3D();
     DestroyWindow(main_hwnd);
-    UnregisterClass(wc.lpszClassName, wc.hInstance);
+    UnregisterClassW(wc.lpszClassName, wc.hInstance);
 
     return 0;
 }
