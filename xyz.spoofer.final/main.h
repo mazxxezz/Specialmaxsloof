@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <memory>
 #include <Windows.h>
 #include <d3d9.h>
 #include <d3d9.h>
@@ -30,12 +31,12 @@
 
 #define WINDOW_WIDTH 1000
 #define WINDOW_HEIGHT 600
-#define WINDOW_TITLE "HWID Spoofer - Windows 11"
+#define WINDOW_TITLE L"HWID Spoofer - Windows 11"
 
 extern HWND main_hwnd;
 extern IDirect3DDevice9* g_pd3dDevice;
 extern D3DPRESENT_PARAMETERS g_d3dpp;
-extern Menu* m_Menu;
+extern std::unique_ptr<Menu> m_Menu;
 extern bool loader_active;
 extern std::string imagePath;
 
@@ -44,6 +45,7 @@ extern LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 extern HRESULT CreateDeviceD3D(HWND hWnd);
 extern void CleanupDeviceD3D();
 extern void ResetDevice();
+extern void Theme();
 extern HRESULT LoadTextureFromFile(const char* filename, PDIRECT3DTEXTURE9* out_texture, int* out_width, int* out_height);
 extern bool FileExists(const std::string& path);
 
