@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ntstatus.h>
+#include <winternl.h>
+
 #define LENGTH(a) (sizeof(a) / sizeof(a[0]))
 
 typedef NTSTATUS (__stdcall* NTQK)(HANDLE KeyHandle, DWORD KeyInformationClass, PVOID KeyInformation, ULONG Length, PULONG ResultLength);
