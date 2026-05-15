@@ -3,7 +3,7 @@
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib, "ws2_32.lib")
 
 #include <sstream>
 
@@ -17,7 +17,8 @@ std::string IV = _xor_("925a28e64f7c1216f6");
 sockaddr_in serv_addr;
 
 Client::Client() {
-	WSADATA data; WORD ver = MAKEWORD(2, 2);
+	WSADATA data;
+	WORD ver = MAKEWORD(2, 2);
 	INT WSResult = WSAStartup(ver, &data);
 
 	if (WSResult != 0) {
@@ -37,7 +38,8 @@ Client::Client() {
 	inet_pton(AF_INET, SERVERIP.c_str(), &serv_addr.sin_addr);
 	connected = reconnect();
 
-	if (connected) setup = setupEncryption();
+	if (connected)
+		setup = setupEncryption();
 }
 
 Client::~Client() {
@@ -53,8 +55,7 @@ bool Client::reconnect() {
 		if (connResult == SOCKET_ERROR) {
 			closesocket(m_sock);
 			WSACleanup();
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
@@ -71,8 +72,7 @@ std::string Client::sendrecieve(const std::string& text) {
 			if (bytesRec > 0) {
 				return std::string(buf, 0, bytesRec);
 			}
-		}
-		else if (reconnect()) {
+		} else if (reconnect()) {
 			return sendrecieve(text);
 		}
 	}
@@ -86,21 +86,21 @@ void ERRORLOG(std::string message) {
 	exit(0);
 }
 
-template< typename ... Args >
-std::string stringer(Args const& ... args)
-{
+template <typename... Args>
+std::string stringer(Args const&... args) {
 	std::ostringstream stream;
 	using List = int[];
-	(void)List {
-		0, ((void)(stream << args), 0) ...
-	};
+	(void)List{0, ((void)(stream << args), 0)...};
 	return stream.str();
 }
 
 bool Client::setupEncryption() {
 	std::string SetupKey = sendrecieve(ENC_KEY + _xor_(";") + IV);
-	std::string serverCipher = SetupKey.substr(0, SetupKey.find(_xor_(";"))).data();
-	std::string serverIv = SetupKey.substr(SetupKey.find(_xor_(";")) + 1).data();
+	std::string serverCipher =
+	    SetupKey.substr(0, SetupKey.find(_xor_(";")))
+	        .data();
+	std::string serverIv =
+	    SetupKey.substr(SetupKey.find(_xor_(";")) + 1).data();
 
 	if (ENC_KEY == serverCipher) {
 		if (IV == serverIv) {
@@ -109,21 +109,23 @@ bool Client::setupEncryption() {
 			// Check version control:
 			if (VERSION == ServerVersion) {
 				std::string successGetUsername = _xor_("SUCCESS_GET_USERNAME");
-				std::string getUsername = sendrecieve(stringer(_xor_("SPOOFER_GET_USERNAME;"), getHWinfo64()));
-				if (getUsername.size() == successGetUsername.size()) return true;
-				else ERRORLOG(_xor_("ERROR 3131"));
-			}
-			else ERRORLOG(_xor_("ERROR 103"));
-		}
-		else ERRORLOG(_xor_("ERROR 102"));
-	}
-	else ERRORLOG(_xor_("ERROR 101"));
+				std::string getUsername = sendrecieve(
+				    stringer(_xor_("SPOOFER_GET_USERNAME;"), getHWinfo64()));
+				if (getUsername.size() == successGetUsername.size())
+					return true;
+				else
+					ERRORLOG(_xor_("ERROR 3131"));
+			} else
+				ERRORLOG(_xor_("ERROR 103"));
+		} else
+			ERRORLOG(_xor_("ERROR 102"));
+	} else
+		ERRORLOG(_xor_("ERROR 101"));
 }
 
-char* Client::decyptBuffer(char* buffer, int length)
-{
+char* Client::decyptBuffer(char* buffer, int length) {
 	std::string ss(buffer, length);
-	std::string decryptedString;// = decrypt(ss);
+	std::string decryptedString; // = decrypt(ss);
 	ss.clear();
 
 	char* finalBuffer = new char[decryptedString.size()];
